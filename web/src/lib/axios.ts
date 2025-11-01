@@ -1,19 +1,22 @@
 import axios from "axios";
 import Cookies from "js-cookie";
+import { toast } from "sonner";
 
 const baseURL = import.meta.env.VITE_API_URL || "http://localhost:3000";
 
-const api = axios.create(baseURL);
+const api = axios.create({ baseURL });
 
 api.interceptors.request.use((cfg) => {
-  const token = Cookies.get("auth_token");
+  const token = Cookies.get("laudoMaster_token");
   if (token) cfg.headers.Authorization = `Bearer ${token}`;
   return cfg;
 });
 
 api.interceptors.response.use(
-  (r) => r,
+  (response) => response,
   (err) => {
+    const message = err.response?.data?.message;
+    toast.error(message || "Algo deu errado. Tente novamente.");
     return Promise.reject(err);
   }
 );
