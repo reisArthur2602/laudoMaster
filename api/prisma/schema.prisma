@@ -1,0 +1,239 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  SUPER_ADMIN
+  MEMBER
+}
+
+enum StudyStatus {
+  PENDING
+  REPORTING
+  REPORTED
+  DELIVERED
+}
+
+model User {
+  id          String     @id @default(cuid())
+  name        String
+  email       String     @unique
+  password    String
+  role        Role       @default(MEMBER)
+  memberOn    Member[]   @relation("UserMembers")
+  reports     Report[]   @relation("ReportAuthor")
+  doctor      Doctor?
+  createdAt   DateTime   @default(now())
+}
+
+model Doctor {
+  id          String   @id @default(cuid())
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId      String   @unique
+  crm         String?
+  specialty   String?
+  signature   String?   // URL da assinatura digital
+  createdAt   DateTime  @default(now())
+}
+
+model Organization {
+  id             String               @id @default(cuid())
+  name           String
+  slug           String               @unique
+  members        Member[]             @relation("OrgMembers")
+  invites        Invite[]             @relation("OrgInvites")
+  patients       Patient[]            @relation("OrgPatients")
+  equipments     Equipment[]          @relation("OrgEquipments")
+  studies        Study[]              @relation("OrgStudies")
+  integrations   IntegrationSettings?
+  subscription   Subscription?
+  auditLogs      AuditLog[]
+  branches       Branch[]
+  createdAt      DateTime             @default(now())
+}
+
+model Branch {
+  id              String          @id @default(cuid())
+  name            String
+  organization    Organization    @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  organizationId  String
+  studies         Study[]
+  equipments      Equipment[]
+  createdAt       DateTime        @default(now())
+}
+
+model Member {
+  id              String        @id @default(cuid())
+  user            User          @relation("UserMembers", fields: [userId], references: [id], onDelete: Cascade)
+  userId          String
+  organization    Organization  @relation("OrgMembers", fields: [organizationId], references: [id], onDelete: Cascade)
+  organizationId  String
+  role            Role
+  createdAt       DateTime      @default(now())
+
+  @@unique([userId, organizationId])
+}
+
+model Invite {
+  id              String        @id @default(cuid())
+  organization    Organization  @relation("OrgInvites", fields: [organizationId], references: [id], onDelete: Cascade)
+  organizationId  String
+  email           String
+  role            Role
+  expireAt        DateTime
+
+  @@unique([email, organizationId])
+}
+
+model Patient {
+  id               String             @id @default(cuid())
+  name             String
+  cpf              String             @unique
+  phone            String?
+  birthDate        DateTime?
+  gender           String?
+  organization     Organization       @relation("OrgPatients", fields: [organizationId], references: [id], onDelete: Cascade)
+  organizationId   String
+  studies          Study[]
+  documents        PatientDocument[]
+  createdAt        DateTime           @default(now())
+}
+
+model PatientDocument {
+  id          String     @id @default(cuid())
+  patient     Patient    @relation(fields: [patientId], references: [id], onDelete: Cascade)
+  patientId   String
+  filename    String
+  url         String
+  uploadedAt  DateTime   @default(now())
+}
+
+model Equipment {
+  id              String        @id @default(cuid())
+  name            String
+  modality        String?
+  manufacturer    String?
+  model           String?
+  serialNumber    String?
+  location        String?
+  organization    Organization  @relation("OrgEquipments", fields: [organizationId], references: [id], onDelete: Cascade)
+  organizationId  String
+  branch          Branch?       @relation(fields: [branchId], references: [id])
+  branchId        String?
+  studies         Study[]
+  createdAt       DateTime      @default(now())
+}
+
+model Study {
+  id              String           @id @default(cuid())
+  orthancId       String?          @unique
+  patient         Patient          @relation(fields: [patientId], references: [id], onDelete: Cascade)
+  patientId       String
+  organization    Organization     @relation("OrgStudies", fields: [organizationId], references: [id], onDelete: Cascade)
+  organizationId  String
+  branch          Branch?          @relation(fields: [branchId], references: [id])
+  branchId        String?
+  equipment       Equipment?       @relation(fields: [equipmentId], references: [id])
+  equipmentId     String?
+  modality        String?
+  description     String?
+  status          StudyStatus      @default(PENDING)
+  report          Report?
+  instances       Instance[]
+  attachments     StudyAttachment[]
+  deliveries      StudyDelivery[]
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+}
+
+model Instance {
+  id          String   @id @default(cuid())
+  study       Study    @relation(fields: [studyId], references: [id], onDelete: Cascade)
+  studyId     String
+  dicomUid    String?
+  previewUrl  String
+  dicomUrl    String
+  createdAt   DateTime @default(now())
+}
+
+model Report {
+  id           String   @id @default(cuid())
+  study        Study    @relation(fields: [studyId], references: [id], onDelete: Cascade)
+  studyId      String   @unique
+  author       User?    @relation("ReportAuthor", fields: [authorId], references: [id])
+  authorId     String?
+  filename     String
+  url          String
+  signed       Boolean  @default(false)
+  signedAt     DateTime?
+  createdAt    DateTime @default(now())
+}
+
+model StudyAttachment {
+  id        String   @id @default(cuid())
+  study     Study    @relation(fields: [studyId], references: [id], onDelete: Cascade)
+  studyId   String
+  filename  String
+  mimeType  String
+  size      Int
+  path      String
+  url       String
+  createdAt DateTime @default(now())
+}
+
+model StudyDelivery {
+  id          String   @id @default(cuid())
+  study       Study    @relation(fields: [studyId], references: [id], onDelete: Cascade)
+  studyId     String
+  method      String   // TOTEM | PORTAL | WHATSAPP
+  recipient   String
+  confirmed   Boolean  @default(true)
+  deliveredAt DateTime @default(now())
+}
+
+model IntegrationSettings {
+  id              String        @id @default(cuid())
+  organization    Organization  @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  organizationId  String        @unique
+
+  orthancUrl      String?
+  orthancUser     String?
+  orthancPassword String?
+
+  ftpBaseUrl      String?
+  ftpUser         String?
+  ftpPassword     String?
+
+  whatsappApiUrl  String?
+  whatsappToken   String?
+  webhookUrl      String?
+
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+}
+
+model Subscription {
+  id              String        @id @default(cuid())
+  organization    Organization  @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  organizationId  String        @unique
+  plan            String        @default("FREE")
+  status          String        @default("ACTIVE")
+  startedAt       DateTime      @default(now())
+  endsAt          DateTime?
+}
+
+model AuditLog {
+  id             String        @id @default(cuid())
+  organization   Organization  @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  organizationId String
+  userId         String?
+  action         String
+  description    String?
+  ipAddress      String?
+  createdAt      DateTime      @default(now())
+}
