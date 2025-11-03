@@ -5,12 +5,19 @@ import { Toaster } from "sonner";
 import App from "./App.tsx";
 import "./index.css";
 
-export const queryClient = new QueryClient();
+export const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: Infinity,
+      retry: 1,
+    },
+  },
+});
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <QueryClientProvider client={queryClient}>
-      <Toaster expand />
+      <Toaster expand theme="system" />
       <App />
     </QueryClientProvider>
   </StrictMode>

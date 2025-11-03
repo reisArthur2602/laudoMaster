@@ -9,26 +9,21 @@ export const useAuth = () => {
   const navigate = useNavigate();
   const token = Cookies.get("laudoMaster_token");
 
-  const {
-    data: user,
-    isPending,
-    isFetching,
-  } = useQuery({
-    queryKey: ["user-session"],
+  const { data, isPending, isFetching } = useQuery({
+    queryKey: ["profile"],
     queryFn: getUserProfile,
     enabled: !!token,
     retry: false,
-    staleTime: Infinity,
   });
 
   const logout = () => {
-    queryClient.invalidateQueries({ queryKey: ["user", user?.id] });
+    queryClient.clear();
     Cookies.remove("laudoMaster_token");
-    navigate("/login", { replace: true });
+    navigate("/", { replace: true });
   };
 
   const loading = !!token && (isPending || isFetching);
-
+  const user = data ?? null;
   return {
     user,
     loading,
