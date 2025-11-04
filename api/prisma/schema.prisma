@@ -26,19 +26,19 @@ model User {
   password    String
   role        Role       @default(MEMBER)
   memberOn    Member[]   @relation("UserMembers")
-  reports     Report[]   @relation("ReportAuthor")
-  doctor      Doctor?
   createdAt   DateTime   @default(now())
 }
 
 model Doctor {
-  id          String   @id @default(cuid())
-  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId      String   @unique
-  crm         String?
-  specialty   String?
-  signature   String?   // URL da assinatura digital
-  createdAt   DateTime  @default(now())
+  id              String         @id @default(cuid())
+  idMedico        Int      @unique
+  organization    Organization   @relation("OrgDoctors", fields: [organizationId], references: [id], onDelete: Cascade)
+  name            String
+  organizationId  String
+  crm             String?
+  specialty       String?
+  createdAt       DateTime       @default(now())
+  studies         Study[]
 }
 
 model Organization {
@@ -51,20 +51,9 @@ model Organization {
   equipments     Equipment[]          @relation("OrgEquipments")
   studies        Study[]              @relation("OrgStudies")
   integrations   IntegrationSettings?
-  subscription   Subscription?
-  auditLogs      AuditLog[]
-  branches       Branch[]
-  createdAt      DateTime             @default(now())
-}
+  doctors        Doctor[]             @relation("OrgDoctors")
 
-model Branch {
-  id              String          @id @default(cuid())
-  name            String
-  organization    Organization    @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-  organizationId  String
-  studies         Study[]
-  equipments      Equipment[]
-  createdAt       DateTime        @default(now())
+  createdAt      DateTime             @default(now())
 }
 
 model Member {
@@ -103,7 +92,7 @@ model Patient {
   documents        PatientDocument[]
   createdAt        DateTime           @default(now())
 }
-
+  
 model PatientDocument {
   id          String     @id @default(cuid())
   patient     Patient    @relation(fields: [patientId], references: [id], onDelete: Cascade)
@@ -123,8 +112,6 @@ model Equipment {
   location        String?
   organization    Organization  @relation("OrgEquipments", fields: [organizationId], references: [id], onDelete: Cascade)
   organizationId  String
-  branch          Branch?       @relation(fields: [branchId], references: [id])
-  branchId        String?
   studies         Study[]
   createdAt       DateTime      @default(now())
 }
@@ -136,14 +123,17 @@ model Study {
   patientId       String
   organization    Organization     @relation("OrgStudies", fields: [organizationId], references: [id], onDelete: Cascade)
   organizationId  String
-  branch          Branch?          @relation(fields: [branchId], references: [id])
-  branchId        String?
+
   equipment       Equipment?       @relation(fields: [equipmentId], references: [id])
   equipmentId     String?
   modality        String?
   description     String?
   status          StudyStatus      @default(PENDING)
-  report          Report?
+
+
+  doctor          Doctor           @relation(fields: [doctorId], references: [id], onDelete: Cascade)
+  doctorId        String
+
   instances       Instance[]
   attachments     StudyAttachment[]
   deliveries      StudyDelivery[]
@@ -159,19 +149,6 @@ model Instance {
   previewUrl  String
   dicomUrl    String
   createdAt   DateTime @default(now())
-}
-
-model Report {
-  id           String   @id @default(cuid())
-  study        Study    @relation(fields: [studyId], references: [id], onDelete: Cascade)
-  studyId      String   @unique
-  author       User?    @relation("ReportAuthor", fields: [authorId], references: [id])
-  authorId     String?
-  filename     String
-  url          String
-  signed       Boolean  @default(false)
-  signedAt     DateTime?
-  createdAt    DateTime @default(now())
 }
 
 model StudyAttachment {
@@ -190,7 +167,7 @@ model StudyDelivery {
   id          String   @id @default(cuid())
   study       Study    @relation(fields: [studyId], references: [id], onDelete: Cascade)
   studyId     String
-  method      String   // TOTEM | PORTAL | WHATSAPP
+  method      String
   recipient   String
   confirmed   Boolean  @default(true)
   deliveredAt DateTime @default(now())
@@ -215,25 +192,4 @@ model IntegrationSettings {
 
   createdAt       DateTime      @default(now())
   updatedAt       DateTime      @updatedAt
-}
-
-model Subscription {
-  id              String        @id @default(cuid())
-  organization    Organization  @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-  organizationId  String        @unique
-  plan            String        @default("FREE")
-  status          String        @default("ACTIVE")
-  startedAt       DateTime      @default(now())
-  endsAt          DateTime?
-}
-
-model AuditLog {
-  id             String        @id @default(cuid())
-  organization   Organization  @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-  organizationId String
-  userId         String?
-  action         String
-  description    String?
-  ipAddress      String?
-  createdAt      DateTime      @default(now())
 }

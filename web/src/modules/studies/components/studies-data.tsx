@@ -10,11 +10,7 @@ import {
   type ColumnFiltersState,
   type SortingState,
 } from "@tanstack/react-table";
-import {
-  ChevronLeft,
-  ChevronRight,
-  MoreHorizontal
-} from "lucide-react";
+import { ChevronLeft, ChevronRight, MoreHorizontal } from "lucide-react";
 
 import {
   Table,
@@ -37,14 +33,24 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { formatStudyStatus } from "@/utils/format-study-status";
 import { StudyAttachments } from "./study-attachments";
+import { StudyDicomInstances } from "./study-dicom-instances";
 
 const studyColumns: ColumnDef<Study>[] = [
   {
     accessorKey: "patient.name",
     header: () => "Paciente",
     cell: ({ row }) => (
-      <div className="font-medium text-foreground">
-        {row.original.patient?.name}
+      <div className="font-medium text-foreground capitalize">
+        {row.original.patient?.name.toLocaleLowerCase()}
+      </div>
+    ),
+  },
+  {
+    accessorKey: "doctor.name",
+    header: () => "Responsável",
+    cell: ({ row }) => (
+      <div className="font-medium text-foreground capitalize">
+        {row.original.doctor?.name.toLocaleLowerCase()}
       </div>
     ),
   },
@@ -95,7 +101,8 @@ const studyColumns: ColumnDef<Study>[] = [
         <DropdownMenuContent align="end">
           <DropdownMenuLabel>Ações</DropdownMenuLabel>
           <DropdownMenuSeparator />
-          <StudyAttachments attachments={row.original.attachments} />
+          <StudyAttachments study={row.original} />
+          <StudyDicomInstances instances={row.original.instances} />
         </DropdownMenuContent>
       </DropdownMenu>
     ),

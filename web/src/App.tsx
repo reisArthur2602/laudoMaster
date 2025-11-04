@@ -12,6 +12,7 @@ import { MembersPage } from "./modules/members";
 import { EquipmentsPage } from "./modules/equipments";
 import { PatientPage } from "./modules/patient";
 import { ErrorPage } from "./modules/error";
+import { DoctorsPage } from "./modules/doctors";
 
 const router = createBrowserRouter([
   {
@@ -23,7 +24,10 @@ const router = createBrowserRouter([
     element: <Dashboardlayout />,
     children: [
       { index: true, element: <DashboardPage /> },
-      { path: "settings", element: <SettingsPage /> },
+      {
+        path: "settings",
+        element: <SettingsPage />,
+      },
       {
         path: `/dashboard/:orgSlug`,
         element: <OrganizationLayout />,
@@ -32,9 +36,9 @@ const router = createBrowserRouter([
           { path: `studies`, element: <StudiesPage /> },
           { path: `patients`, element: <PatientsPage /> },
           { path: `patients/:patientId`, element: <PatientPage /> },
-
           { path: `members`, element: <MembersPage /> },
           { path: `equipments`, element: <EquipmentsPage /> },
+          { path: `doctors`, element: <DoctorsPage /> },
         ],
       },
     ],

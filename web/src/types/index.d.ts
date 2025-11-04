@@ -71,6 +71,9 @@ type Study = {
   status: StudyStatus;
   description: string | null;
   createdAt: string;
+  doctor: {
+    name: string;
+  };
   attachments?: {
     id: string;
     filename: string;
@@ -88,6 +91,7 @@ type Study = {
     dicomUid: string | null;
     previewUrl: string | null;
     dicomUrl: string | null;
+    createdAt: string;
   }[];
 };
 
@@ -110,4 +114,14 @@ type OrganizationOverview = {
     date: string;
     count: number;
   }[];
+};
+
+type Doctor = {
+  id: string;
+  idMedico: number;
+  name: string;
+  crm: string;
+  specialty: string;
+  createdAt: string;
+  organizationId: string;
 };

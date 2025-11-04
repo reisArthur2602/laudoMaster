@@ -6,7 +6,7 @@ type TableSkeletonProps = {
   columns?: number;
 };
 
-export const TableLoading = ({ rows = 7, columns = 5 }: TableSkeletonProps) => {
+export const TableLoading = ({ rows = 5, columns = 5 }: TableSkeletonProps) => {
   return (
     <div className="overflow-hidden rounded-2xl border border-border animate-pulse">
       <div className="bg-muted flex border-b border-border/40">

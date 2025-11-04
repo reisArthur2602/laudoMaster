@@ -1,10 +1,4 @@
-import {
-  Item,
-  ItemActions,
-  ItemContent,
-  ItemDescription,
-  ItemTitle,
-} from "@/components/ui/item";
+
 import { InviteMemberDialog } from "./components/invite-members-dialog";
 
 import { useMembers } from "./hooks/use-members";

@@ -27,8 +27,8 @@ export const AppLoading = () => {
         <Skeleton className="w-20 h-6" />
         <Skeleton className="w-20 h-6" />
       </nav>
-      <main className="mx-auto container p-6 flex-1 ">
-        <TableLoading rows={8} />
+      <main className="mx-auto max-w-[1200px] w-full p-6 mt-4 flex-1">
+        <TableLoading />
       </main>
     </div>
   );

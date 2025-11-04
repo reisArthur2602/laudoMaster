@@ -81,8 +81,8 @@ export const PatientPage = () => {
         <h3 className="capitalize">{patient.name}</h3>
         <p className="text-muted-foreground text-sm mt-1">
           CPF:{" "}
-          {patient.cpf.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, "$1.$2.$3-$4")} •{" "}
-          {calcAge(patient.birthDate)}
+          {patient.cpf.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, "$1.$2.$3-$4")}
+          {patient.birthDate && `• ${calcAge(patient.birthDate)}`}
         </p>
       </header>
 
@@ -129,16 +129,17 @@ export const PatientPage = () => {
         </div>
 
         <ScrollArea className="h-[300px] rounded-sm border border-border/60 p-4 pr-4 bg-card/50">
-          {mockStudies.length > 0 ? (
+          {patient.studies.length > 0 ? (
             <div className="space-y-3">
-              {mockStudies.map((study) => (
+              {patient.studies.map((study) => (
                 <div
                   key={study.id}
                   className="rounded-md border border-border/50 p-4 hover:bg-muted/40 transition last:mb-0"
                 >
                   <div className="flex justify-between items-center">
-                    <p className="font-medium text-foreground">
-                      {study.description || "Sem descrição"}
+                    <p className="font-medium text-foreground capitalize">
+                      {study.description?.toLocaleLowerCase() ||
+                        "Sem descrição"}
                     </p>
                     <span className="text-xs text-muted-foreground">
                       {new Date(study.createdAt).toLocaleDateString("pt-BR")}

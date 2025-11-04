@@ -11,15 +11,16 @@ import { UploadAttachments } from "./upload-attachments";
 import { DropdownMenuItem } from "@/components/ui/dropdown-menu";
 
 type StudyAttachments = {
-  attachments: Study["attachments"];
+  study: Study;
 };
 
-export const StudyAttachments = ({ attachments }: StudyAttachments) => {
+export const StudyAttachments = ({ study }: StudyAttachments) => {
+  const attachments = study.attachments;
   return (
     <Dialog>
       <DialogTrigger asChild>
         <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
-          <Link  />
+          <Link />
           Ver Anexos
         </DropdownMenuItem>
       </DialogTrigger>
@@ -58,7 +59,7 @@ export const StudyAttachments = ({ attachments }: StudyAttachments) => {
           </p>
         )}
         <DialogFooter>
-          <UploadAttachments />
+          <UploadAttachments studyId={study.id} />
         </DialogFooter>
       </DialogContent>
     </Dialog>

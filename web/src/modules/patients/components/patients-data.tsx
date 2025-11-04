@@ -35,7 +35,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { useNavigate, useParams } from "react-router";
+import { useNavigate } from "react-router";
 import { useState } from "react";
 
 const patientColumns: ColumnDef<
@@ -45,7 +45,9 @@ const patientColumns: ColumnDef<
     accessorKey: "name",
     header: "Nome",
     cell: ({ row }) => (
-      <span className="font-medium text-foreground">{row.original.name}</span>
+      <span className="font-medium text-foreground capitalize">
+        {row.original.name.toLocaleLowerCase()}
+      </span>
     ),
   },
   {

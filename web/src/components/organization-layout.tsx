@@ -3,7 +3,7 @@ import { Header } from "./header";
 import { AppLoading } from "./app-loading";
 
 import { usePermission } from "@/hooks/use-permission";
-import { Tabs, type TabsLinks } from "./ui/tabs";
+import { Tabs, type TabsLinks } from "./tabs";
 
 export const OrganizationLayout = () => {
   const { orgSlug } = useParams();
@@ -29,6 +29,11 @@ export const OrganizationLayout = () => {
       label: "Equipamentos",
       allowed: ["SUPER_ADMIN"],
     },
+    {
+      href: prefix + "doctors",
+      label: "Médicos",
+      allowed: ["SUPER_ADMIN"],
+    },
   ];
 
   if (loading) return <AppLoading />;
@@ -38,7 +43,7 @@ export const OrganizationLayout = () => {
     <>
       <Header />
       <Tabs links={links} currentRole={role} checkPermission={hasPermission} />
-      <main className="mx-auto container p-6 mt-4 flex-1">
+      <main className="mx-auto max-w-[1200px] w-full p-6 mt-4 flex-1">
         <Outlet />
       </main>
     </>
