@@ -10,7 +10,12 @@ import {
   type ColumnFiltersState,
   type SortingState,
 } from "@tanstack/react-table";
-import { ChevronLeft, ChevronRight, MoreHorizontal } from "lucide-react";
+import {
+  ChevronLeft,
+  ChevronRight,
+  ImageIcon,
+  MoreHorizontal,
+} from "lucide-react";
 
 import {
   Table,
@@ -25,6 +30,7 @@ import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
+  DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
@@ -33,7 +39,6 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { formatStudyStatus } from "@/utils/format-study-status";
 import { StudyAttachments } from "./study-attachments";
-import { StudyDicomInstances } from "./study-dicom-instances";
 
 const studyColumns: ColumnDef<Study>[] = [
   {
@@ -102,7 +107,14 @@ const studyColumns: ColumnDef<Study>[] = [
           <DropdownMenuLabel>Ações</DropdownMenuLabel>
           <DropdownMenuSeparator />
           <StudyAttachments study={row.original} />
-          <StudyDicomInstances instances={row.original.instances} />
+          <DropdownMenuItem asChild>
+            <a
+              href={`http://10.1.1.145:5000/viewer_pro.html?study=${row.original.studyId}`}
+            >
+              <ImageIcon />
+              Ver Imagens
+            </a>
+          </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
     ),
@@ -126,7 +138,7 @@ export const StudiesData = ({ data }: StudiesData) => {
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
     onSortingChange: setSorting,
-    initialState: { pagination: { pageSize: 5 } },
+    initialState: { pagination: { pageSize: 6 } },
     state: { sorting, columnFilters },
   });
 

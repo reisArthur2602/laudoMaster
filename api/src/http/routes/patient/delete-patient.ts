@@ -24,8 +24,9 @@ export const deletePatient = async (app: FastifyInstance) => {
       handler: async (request, reply) => {
         const { slug, id } = request.params;
         const { organizationId } = await request.requireOrgRole(slug, [
-          Role.SUPER_ADMIN,
-          Role.MEMBER,
+          Role.ADMIN,
+          Role.LAUDO,
+          Role.TECHNICAL,
         ]);
 
         await prisma.patient.delete({

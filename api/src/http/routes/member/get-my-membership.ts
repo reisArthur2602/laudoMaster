@@ -20,14 +20,17 @@ export const getMyMembership = (app: FastifyInstance) => {
           response: {
             200: z.object({
               role: z.nativeEnum(Role),
+              organizationId: z.string(),
             }),
           },
         },
       },
       async (request, reply) => {
         const { slug } = request.params;
-        const { role } = await request.getOrgMembershipBySlug(slug);
-        return reply.send({ role });
+        const { role, organizationId } = await request.getOrgMembershipBySlug(
+          slug
+        );
+        return reply.send({ role, organizationId });
       }
     );
 };

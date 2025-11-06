@@ -11,7 +11,7 @@ export const deleteStudyFile = (app: FastifyInstance) => {
   app
     .withTypeProvider<ZodTypeProvider>()
     .register(authPlugin)
-    .delete("/studies/:studyId/attachments/:attachmentId", {
+    .delete("/org/:slug/attachments/:attachmentId", {
       schema: {
         tags: ["Studies"],
         summary: "Remover anexo de um estudo ",
@@ -19,22 +19,29 @@ export const deleteStudyFile = (app: FastifyInstance) => {
         params: z.object({
           studyId: z.string(),
           attachmentId: z.string(),
+          slug: z.string(),
         }),
+        response: {
+          204: z.null(),
+        },
       },
       handler: async (req, reply) => {
-        const { attachmentId } = req.params;
+        const { attachmentId, slug } = req.params;
+
+        await req.getOrgMembershipBySlug(slug);
 
         const attachment = await prisma.studyAttachment.findUnique({
-          where: { id: attachmentId },
+          where: { id: attachmentId, study: { organization: { slug } } },
         });
 
         if (!attachment) throw new BadRequestError("Anexo não encontrado");
 
         const client = await getFtpClient();
-        await client.remove(attachment.path).catch(() => {});
+        await client.remove(attachment.path);
         await prisma.studyAttachment.delete({ where: { id: attachmentId } });
         client.close();
-        return reply.status(204).send();
+
+        return reply.status(204).send(null);
       },
     });
 };

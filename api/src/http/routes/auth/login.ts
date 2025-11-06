@@ -24,7 +24,6 @@ export const login = (app: FastifyInstance) => {
               id: z.string(),
               name: z.string(),
               email: z.string(),
-              role: z.string(),
             }),
           }),
         },
@@ -40,7 +39,6 @@ export const login = (app: FastifyInstance) => {
           name: true,
           email: true,
           password: true,
-          role: true,
         },
       });
 
@@ -58,7 +56,6 @@ export const login = (app: FastifyInstance) => {
           id: user.id,
           name: user.name,
           email: user.email,
-          role: user.role,
         },
       });
     }

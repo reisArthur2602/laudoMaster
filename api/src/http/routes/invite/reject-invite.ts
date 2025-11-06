@@ -19,7 +19,6 @@ export const rejectInvite = (app: FastifyInstance) => {
         response: { 204: z.null() },
       },
       handler: async (request, reply) => {
-        const userId = await request.getCurrentUserId();
         const { inviteId } = request.params;
 
         const invite = await prisma.invite.findUnique({

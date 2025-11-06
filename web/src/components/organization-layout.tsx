@@ -12,27 +12,31 @@ export const OrganizationLayout = () => {
   const prefix = `/dashboard/${orgSlug}/`;
 
   const links: TabsLinks[] = [
-    { href: prefix, label: "Visão Geral", allowed: ["MEMBER", "SUPER_ADMIN"] },
+    {
+      href: prefix,
+      label: "Visão Geral",
+      allowed: ["TECHNICAL", "LAUDO", "ADMIN"],
+    },
     {
       href: prefix + "studies",
       label: "Exames",
-      allowed: ["MEMBER", "SUPER_ADMIN"],
+      allowed: ["TECHNICAL", "LAUDO", "ADMIN"],
     },
     {
       href: prefix + "patients",
       label: "Pacientes",
-      allowed: ["MEMBER", "SUPER_ADMIN"],
+      allowed: ["TECHNICAL", "LAUDO", "ADMIN"],
     },
-    { href: prefix + "members", label: "Membros", allowed: ["SUPER_ADMIN"] },
+    { href: prefix + "members", label: "Membros", allowed: ["ADMIN"] },
     {
       href: prefix + "equipments",
       label: "Equipamentos",
-      allowed: ["SUPER_ADMIN"],
+      allowed: ["ADMIN"],
     },
     {
       href: prefix + "doctors",
       label: "Médicos",
-      allowed: ["SUPER_ADMIN"],
+      allowed: ["ADMIN"],
     },
   ];
 

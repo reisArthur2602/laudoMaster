@@ -36,7 +36,7 @@ export const createEquipment = (app: FastifyInstance) => {
 
         const { organizationId } = await request.requireOrgRole(
           slug,
-          Role.SUPER_ADMIN
+          Role.ADMIN
         );
 
         await prisma.equipment.create({

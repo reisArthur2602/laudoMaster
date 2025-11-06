@@ -13,26 +13,33 @@ export const attachStudyFile = (app: FastifyInstance) => {
   app
     .withTypeProvider<ZodTypeProvider>()
     .register(authPlugin)
-    .post("/studies/:studyId/attachments", {
+    .post("/org/:slug/studies/:studyId/attachments", {
       schema: {
         tags: ["Studies"],
         summary: "Anexar PDF a um estudo",
         security: [{ bearerAuth: [] }],
         consumes: ["multipart/form-data"],
         params: z.object({
+          slug: z.string(),
           studyId: z.string(),
         }),
+        response: {
+          201: z.null(),
+        },
       },
       handler: async (request, reply) => {
-        const { studyId } = request.params;
+        const { studyId, slug } = request.params;
         const data = await request.file();
 
+        await request.getOrgMembershipBySlug(slug);
+
         if (!data) throw new BadRequestError("Nenhum arquivo enviado");
+
         if (!data.mimetype.includes("pdf"))
           throw new BadRequestError("Somente PDFs são aceitos");
 
-        // Verifica estudo
         const study = await prisma.study.findUnique({ where: { id: studyId } });
+
         if (!study)
           throw new BadRequestError(
             "Estudo não encontrado para o ID informado."
@@ -43,17 +50,13 @@ export const attachStudyFile = (app: FastifyInstance) => {
         const remoteDir = `/public_html/uploads/studies`;
         const remotePath = `${remoteDir}/${fileName}`;
 
-        console.log("📁 Preparando upload:", remotePath);
-
         const client = await getFtpClient();
-        console.log("📡 FTP conectado");
 
         const buffer = await data.toBuffer();
         const stream = Readable.from(buffer);
 
         await client.ensureDir(remoteDir);
         await client.uploadFrom(stream, remotePath);
-        console.log("✅ Upload concluído!");
 
         await prisma.studyAttachment.create({
           data: {
@@ -67,8 +70,8 @@ export const attachStudyFile = (app: FastifyInstance) => {
         });
 
         client.close();
-        console.log("📦 Arquivo registrado no banco!");
-        return reply.status(201).send({ success: true });
+
+        return reply.status(201).send(null);
       },
     });
 };

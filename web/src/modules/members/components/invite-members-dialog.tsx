@@ -47,7 +47,7 @@ export const InviteMemberDialog = () => {
         <DialogHeader>
           <DialogTitle>Convidar novo membro</DialogTitle>
           <DialogDescription className="text-muted-foreground">
-            Envie um convite para adicionar um novo membro à sua organização
+            Envie um convite para adicionar um novo membro à sua organização.
           </DialogDescription>
         </DialogHeader>
 
@@ -71,15 +71,24 @@ export const InviteMemberDialog = () => {
                       onValueChange={field.onChange}
                       disabled={loading}
                     >
-                      <SelectTrigger className="w-full">
+                      <SelectTrigger className="w-full truncate wrap-break-word">
                         <SelectValue placeholder="Selecione o nível de acesso" />
                       </SelectTrigger>
+
                       <SelectContent>
-                        <SelectItem value="SUPER_ADMIN">
-                          Administrador — acesso total a configurações e membros
+                        <SelectItem value="ADMIN">
+                          <span className="font-medium">Administrador —</span>{" "}
+                          Acesso total à organização, membros e configurações.
                         </SelectItem>
-                        <SelectItem value="MEMBER">
-                          Membro — pode visualizar e executar tarefas básicas
+
+                        <SelectItem value="LAUDO">
+                          <span className="font-medium">Laudo —</span> Pode
+                          visualizar e emitir laudos de exames DICOM.
+                        </SelectItem>
+
+                        <SelectItem value="TECHNICAL">
+                          <span className="font-medium">Técnico —</span> Pode
+                          enviar e visualizar exames externos (MAPA / HOLTER).
                         </SelectItem>
                       </SelectContent>
                     </Select>
@@ -90,7 +99,7 @@ export const InviteMemberDialog = () => {
             />
 
             <DialogFooter>
-              <SubmitButton content="Enviar convite" />
+              <SubmitButton content="Enviar convite" disabled={loading} />
             </DialogFooter>
           </form>
         </Form>

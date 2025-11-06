@@ -20,7 +20,6 @@ export const createDoctor = (app: FastifyInstance) => {
           body: z.object({
             idMedico: z.number(),
             name: z.string(),
-            crm: z.string().optional(),
             specialty: z.string().optional(),
           }),
           response: {
@@ -30,18 +29,14 @@ export const createDoctor = (app: FastifyInstance) => {
       },
       async (request, reply) => {
         const { slug } = request.params;
-        const { idMedico, crm, specialty, name } = request.body;
+        const { idMedico, specialty, name } = request.body;
 
-        const { organizationId } = await request.requireOrgRole(
-          slug,
-          "SUPER_ADMIN"
-        );
+        const { organizationId } = await request.requireOrgRole(slug, "ADMIN");
 
         await prisma.doctor.create({
           data: {
             name,
             idMedico,
-            crm,
             specialty,
             organizationId,
           },

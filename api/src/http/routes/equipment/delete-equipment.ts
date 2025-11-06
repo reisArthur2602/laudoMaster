@@ -28,7 +28,7 @@ export const deleteEquipment = (app: FastifyInstance) => {
         const { slug, equipmentId } = request.params;
         const { organizationId } = await request.requireOrgRole(
           slug,
-          Role.SUPER_ADMIN
+          Role.ADMIN
         );
 
         const equipment = await prisma.equipment.findUnique({

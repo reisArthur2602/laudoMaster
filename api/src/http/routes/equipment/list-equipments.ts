@@ -4,6 +4,7 @@ import z from "zod";
 
 import { prisma } from "../../../database/prisma/prisma.js";
 import { authPlugin } from "../../plugins/auth.js";
+import { Role } from "@prisma/client";
 
 export const listEquipments = (app: FastifyInstance) => {
   app
@@ -40,7 +41,7 @@ export const listEquipments = (app: FastifyInstance) => {
 
         const { organizationId } = await request.requireOrgRole(
           slug,
-          "SUPER_ADMIN"
+          Role.ADMIN
         );
 
         const equipments = await prisma.equipment.findMany({

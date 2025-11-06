@@ -28,7 +28,7 @@ export const removeOrganization = (app: FastifyInstance) => {
 
         const { organizationId } = await request.requireOrgRole(
           slug,
-          Role.SUPER_ADMIN
+          Role.ADMIN
         );
 
         await prisma.organization.delete({

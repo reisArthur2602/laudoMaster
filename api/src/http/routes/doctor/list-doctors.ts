@@ -27,7 +27,6 @@ export const listDoctors = (app: FastifyInstance) => {
                 id: z.string(),
                 idMedico: z.number().nullable(),
                 name: z.string(),
-                crm: z.string().nullable(),
                 specialty: z.string().nullable(),
                 createdAt: z.date(),
                 organizationId: z.string(),
@@ -41,7 +40,7 @@ export const listDoctors = (app: FastifyInstance) => {
 
         const { organizationId } = await request.requireOrgRole(
           slug,
-          Role.SUPER_ADMIN
+          Role.ADMIN
         );
 
         const doctors = await prisma.doctor.findMany({

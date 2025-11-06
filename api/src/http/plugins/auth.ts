@@ -1,4 +1,3 @@
-// src/http/plugins/auth.ts (ou caminho equivalente)
 import type { FastifyInstance } from "fastify";
 import { fastifyPlugin } from "fastify-plugin";
 
@@ -8,6 +7,7 @@ import { prisma } from "../../database/prisma/prisma.js";
 
 export const authPlugin = fastifyPlugin(async (app: FastifyInstance) => {
   app.addHook("preHandler", async (request) => {
+
     request.getCurrentUserId = async () => {
       try {
         const { sub } = await request.jwtVerify<{ sub: string }>();
@@ -52,5 +52,6 @@ export const authPlugin = fastifyPlugin(async (app: FastifyInstance) => {
 
       return membership;
     };
+
   });
 });

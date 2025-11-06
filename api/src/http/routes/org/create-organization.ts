@@ -44,7 +44,7 @@ export const createOrganization = (app: FastifyInstance) => {
             members: {
               create: {
                 userId,
-                role: Role.SUPER_ADMIN,
+                role: Role.ADMIN,
               },
             },
           },

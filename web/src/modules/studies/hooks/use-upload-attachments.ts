@@ -2,7 +2,7 @@ import { useState } from "react";
 import { toast } from "sonner";
 import { attachStudyFile } from "@/http/attach-study-file";
 
-export const useUploadAttachments = (studyId: string) => {
+export const useUploadAttachments = (studyId: string, orgSlug: string) => {
   const [uploading, setUploading] = useState(false);
 
   const onUploadFile = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -17,7 +17,7 @@ export const useUploadAttachments = (studyId: string) => {
 
     setUploading(true);
     try {
-      await attachStudyFile({ studyId, file });
+      await attachStudyFile({ studyId, file, slug: orgSlug });
       toast.success("📄 PDF enviado com sucesso!");
     } catch (err) {
       console.error("❌ Erro ao enviar o arquivo:", err);

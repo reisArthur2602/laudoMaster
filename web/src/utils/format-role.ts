@@ -1,9 +1,12 @@
 export const formatRole = (role: Roles) => {
   switch (role) {
-    case "SUPER_ADMIN":
-      return "Super Admin";
+    case "ADMIN":
+      return "Admin";
 
-    case "MEMBER":
-      return "Membro";
+    case "LAUDO":
+      return "Laudo";
+      
+    case "TECHNICAL":
+      return "Técnico";
   }
 };

@@ -1,4 +1,4 @@
-type Roles = "SUPER_ADMIN" | "MEMBER";
+type Roles = "ADMIN" | "LAUDO" | "TECHNICAL";
 
 type Invite = {
   id: string;
@@ -33,7 +33,6 @@ type User = {
   id: string;
   name: string;
   email: string;
-  role: string;
 };
 type Equipment = {
   id: string;
@@ -51,7 +50,7 @@ type Patient = {
   name: string;
   cpf: string;
   phone: string | null;
-  gender: string | null;
+
   birthDate: string | null;
   createdAt: string;
   studies: {
@@ -69,6 +68,7 @@ type Study = {
   id: string;
   modality: string | null;
   status: StudyStatus;
+  studyId: string;
   description: string | null;
   createdAt: string;
   doctor: {
@@ -88,7 +88,6 @@ type Study = {
   };
   instances?: {
     id: string;
-    dicomUid: string | null;
     previewUrl: string | null;
     dicomUrl: string | null;
     createdAt: string;
@@ -118,9 +117,8 @@ type OrganizationOverview = {
 
 type Doctor = {
   id: string;
-  idMedico: number;
+  idMedico?: number;
   name: string;
-  crm: string;
   specialty: string;
   createdAt: string;
   organizationId: string;

@@ -2,12 +2,14 @@ import { Button } from "@/components/ui/button";
 import { Loader2, Upload } from "lucide-react";
 import { useRef } from "react";
 import { useUploadAttachments } from "../hooks/use-upload-attachments";
+import { useParams } from "react-router";
 
 type UploadAttachments = { studyId: string };
 
 export const UploadAttachments = ({ studyId }: UploadAttachments) => {
+  const { orgSlug } = useParams();
   const inputRef = useRef<HTMLInputElement>(null);
-  const { uploading, onUploadFile } = useUploadAttachments(studyId);
+  const { uploading, onUploadFile } = useUploadAttachments(studyId, orgSlug!);
 
   return (
     <div className="flex justify-end">
@@ -32,7 +34,7 @@ export const UploadAttachments = ({ studyId }: UploadAttachments) => {
           </>
         ) : (
           <>
-            <Upload className="w-4 h-4 mr-2" />
+            <Upload />
             Adicionar PDF
           </>
         )}

@@ -22,7 +22,6 @@ export const getUserProfile = (app: FastifyInstance) => {
               id: z.string(),
               name: z.string(),
               email: z.string(),
-              role: z.string(),
             }),
           },
         },
@@ -36,12 +35,10 @@ export const getUserProfile = (app: FastifyInstance) => {
             id: true,
             name: true,
             email: true,
-            role: true,
           },
         });
 
         if (!user) throw new BadRequestError("Token inválido ou expirado.");
-
         return reply.send(user);
       }
     );

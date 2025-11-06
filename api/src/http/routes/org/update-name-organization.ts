@@ -33,7 +33,7 @@ export const updateOrganization = (app: FastifyInstance) => {
 
         const { organizationId } = await request.requireOrgRole(
           slug,
-          Role.SUPER_ADMIN
+          Role.ADMIN
         );
 
         if (!name) throw new BadRequestError("Nada para atualizar.");

@@ -11,7 +11,7 @@ export const PatientsPage = () => {
   return (
     <div className="space-y-6">
       <Headline
-        title="Paciente"
+        title="Pacientes"
         subtitle="Listagem dos pacientes e seus históricos de exames."
         children={<PatientDialog />}
       />

@@ -20,7 +20,7 @@ export const createInvite = (app: FastifyInstance) => {
         security: [{ bearerAuth: [] }],
         body: z.object({
           email: z.string().email(),
-          role: z.nativeEnum(Role).default(Role.MEMBER),
+          role: z.nativeEnum(Role),
         }),
         params: z.object({
           slug: z.string(),
@@ -34,7 +34,7 @@ export const createInvite = (app: FastifyInstance) => {
         const { email, role } = request.body;
         const { organizationId } = await request.requireOrgRole(
           slug,
-          Role.SUPER_ADMIN
+          Role.ADMIN
         );
 
         const user = await prisma.user.findUnique({ where: { email } });

@@ -1,8 +1,7 @@
 import dayjs from "dayjs";
 import axios from "axios";
 
-const ORTHANC_URL =
-  process.env.ORTHANC_URL || "http://8aff0850b047.sn.mynetname.net:1111";
+const ORTHANC_URL = process.env.ORTHANC_URL || "http://10.1.1.212:8042";
 const ORTHANC_USER = process.env.ORTHANC_USER || "admin";
 const ORTHANC_PASS = process.env.ORTHANC_PASS || "Master@2024";
 
@@ -12,7 +11,6 @@ export const api = axios.create({
     username: ORTHANC_USER,
     password: ORTHANC_PASS,
   },
-  timeout: 10_000,
 });
 
 export type OrthancStudy = {

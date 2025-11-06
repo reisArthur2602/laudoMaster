@@ -15,30 +15,26 @@ export const syncOrthancStudies = async () => {
 
   for (const studyId of studyIds) {
     try {
-      // 🔍 Verifica duplicidade
       const studyExists = await prisma.study.findUnique({
-        where: { orthancId: studyId },
+        where: { studyId },
       });
       if (studyExists) continue;
 
-      // 📄 Detalhes do estudo
       const study = await getStudyDetails(studyId);
       if (!study?.PatientMainDicomTags?.PatientID) {
         console.warn(`⚠️ Estudo ${studyId} sem PatientID válido.`);
         continue;
       }
 
-
       const response = await getPatientData(
         study.PatientMainDicomTags.PatientID
       );
-      
+
       if (!response) continue;
 
       const {
         nascimento,
         descricaoservico,
-
         nomemedico,
         telefone2,
         nomepaciente,
@@ -48,7 +44,6 @@ export const syncOrthancStudies = async () => {
         idmedico,
       } = response;
 
-      // 🧩 Verifica séries
       const firstSerie = study.Series?.[0];
       if (!firstSerie) continue;
 
@@ -68,8 +63,7 @@ export const syncOrthancStudies = async () => {
 
       const { organizationId } = organizationWithSameEquipment;
 
-      const instancesData = await getInstances(studyId);
-      if (!instancesData.length) continue;
+
 
       let birthDate = null;
 
@@ -107,21 +101,13 @@ export const syncOrthancStudies = async () => {
       // 🧾 3️⃣ Cria estudo com médico vinculado
       await prisma.study.create({
         data: {
-          orthancId: studyId,
           patientId: patient.id,
           doctorId: doctor.id,
+          studyId,
           description: descricaoservico?.trim() || "Sem descrição",
           modality: serieMainDicomTags.Modality,
           status: "PENDING",
           organizationId,
-          instances: {
-            createMany: {
-              data: instancesData.map((instance) => ({
-                previewUrl: instance.previewURL,
-                dicomUrl: instance.dicomURL,
-              })),
-            },
-          },
         },
       });
 

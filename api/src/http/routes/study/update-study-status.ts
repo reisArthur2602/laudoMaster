@@ -23,7 +23,7 @@ export const updateStudyStatus = (app: FastifyInstance) => {
     },
     handler: async (req, reply) => {
       const { studyId } = req.params;
-      const { status, method, recipient } = req.body;
+      const { status } = req.body;
 
       const study = await prisma.study.findUnique({ where: { id: studyId } });
 
@@ -33,17 +33,6 @@ export const updateStudyStatus = (app: FastifyInstance) => {
         where: { id: studyId },
         data: { status },
       });
-
-      if (status === "DELIVERED") {
-        await prisma.studyDelivery.create({
-          data: {
-            studyId,
-            method,
-            recipient: recipient ?? "Paciente (tótem)",
-            confirmed: true,
-          },
-        });
-      }
 
       return reply.status(200).send(null);
     },

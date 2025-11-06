@@ -39,7 +39,7 @@ export const listMembers = (app: FastifyInstance) => {
         const { slug } = request.params;
 
         const { organizationId } = await request.requireOrgRole(slug, [
-          Role.SUPER_ADMIN,
+          Role.ADMIN,
         ]);
 
         const members = await prisma.member.findMany({

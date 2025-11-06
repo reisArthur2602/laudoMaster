@@ -3,14 +3,13 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
-import { useParams } from "react-router";
 
 import { toast } from "sonner";
 import z from "zod";
 
 const schema = z.object({
   email: z.string().email("E-mail inválido"),
-  role: z.enum(["SUPER_ADMIN", "MEMBER"]),
+  role: z.enum(["ADMIN", "LAUDO", "TECHNICAL"]),
 });
 
 type InviteForm = z.infer<typeof schema>;
@@ -19,7 +18,7 @@ export const useInviteMembersDialog = (orgSlug: string) => {
   const [open, setOpen] = useState(false);
   const form = useForm<InviteForm>({
     resolver: zodResolver(schema),
-    defaultValues: { email: "", role: "MEMBER" },
+    defaultValues: { email: "", role: "ADMIN" },
   });
 
   const { mutateAsync: createInviteMutation, isPending } = useMutation({

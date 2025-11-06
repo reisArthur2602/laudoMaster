@@ -25,17 +25,17 @@ export const createPatient = async (app: FastifyInstance) => {
             .regex(/^\d{11}$/, "CPF deve conter 11 dígitos numéricos"),
           phone: z.string().optional(),
           birthDate: z.string().datetime().optional(),
-          gender: z.string().optional(),
         }),
         response: { 201: z.null() },
       },
       handler: async (req, reply) => {
         const { slug } = req.params;
-        const { name, cpf, phone, birthDate, gender } = req.body;
+        const { name, cpf, phone, birthDate } = req.body;
 
         const { organizationId } = await req.requireOrgRole(slug, [
-          Role.MEMBER,
-          Role.SUPER_ADMIN,
+          Role.TECHNICAL,
+          Role.LAUDO,
+          Role.ADMIN,
         ]);
 
         const exists = await prisma.patient.findUnique({ where: { cpf } });
@@ -47,7 +47,6 @@ export const createPatient = async (app: FastifyInstance) => {
             name,
             cpf,
             phone,
-            gender,
             birthDate: birthDate ? new Date(birthDate) : null,
             organizationId,
           },

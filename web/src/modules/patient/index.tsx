@@ -6,30 +6,6 @@ import { ArrowLeft, CalendarDays, Phone, Cake, User } from "lucide-react";
 import { usePatient } from "./hooks/use-patient";
 import { formatStudyStatus } from "@/utils/format-study-status";
 
-const mockStudies = [
-  {
-    id: "1",
-    description: "Ultrassom de Abdômen Total",
-    modality: "US",
-    status: "REPORTED",
-    createdAt: new Date().toISOString(),
-  },
-  {
-    id: "2",
-    description: "Raio-X de Tórax",
-    modality: "CR",
-    status: "DELIVERED",
-    createdAt: new Date().toISOString(),
-  },
-  {
-    id: "3",
-    description: "Ressonância Magnética de Joelho",
-    modality: "MR",
-    status: "PENDING",
-    createdAt: new Date().toISOString(),
-  },
-];
-
 const calcAge = (birthDate?: string | null) => {
   if (!birthDate) return "-";
   const diff = Date.now() - new Date(birthDate).getTime();
@@ -82,14 +58,14 @@ export const PatientPage = () => {
         <p className="text-muted-foreground text-sm mt-1">
           CPF:{" "}
           {patient.cpf.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, "$1.$2.$3-$4")}
-          {patient.birthDate && `• ${calcAge(patient.birthDate)}`}
+          {patient.birthDate && ` • ${calcAge(patient.birthDate)}`}
         </p>
       </header>
 
       <section className="space-y-3 text-sm">
         <h4>Informações Pessoais</h4>
 
-        <div className="grid sm:grid-cols-2 gap-x-6 gap-y-4 border border-border/50 rounded-xl p-4 bg-card/50">
+        <div className="grid sm:grid-cols-3 gap-x-6 gap-y-4 border border-border/50 rounded-xl p-4 bg-card/50 ">
           <Info
             icon={<Phone className="size-4 text-primary" />}
             label="Telefone"
@@ -107,17 +83,6 @@ export const PatientPage = () => {
               patient.birthDate
                 ? new Date(patient.birthDate).toLocaleDateString("pt-BR")
                 : "-"
-            }
-          />
-          <Info
-            icon={<User className="size-4 text-primary" />}
-            label="Gênero"
-            value={
-              patient.gender === "M"
-                ? "Masculino"
-                : patient.gender === "F"
-                ? "Feminino"
-                : "Outro"
             }
           />
         </div>

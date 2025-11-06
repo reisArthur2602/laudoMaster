@@ -14,8 +14,9 @@ export const listOrgStudies = (app: FastifyInstance) => {
         tags: ["Studies"],
         summary: "Listar estudos de uma organização",
         security: [{ bearerAuth: [] }],
-        params: z.object({ slug: z.string() }),
-
+        params: z.object({
+          slug: z.string(),
+        }),
         response: {
           200: z.array(
             z.object({
@@ -23,11 +24,16 @@ export const listOrgStudies = (app: FastifyInstance) => {
               modality: z.string().nullable(),
               status: z.nativeEnum(StudyStatus),
               createdAt: z.date(),
-              patient: z.object({ name: z.string() }),
-              doctor: z.object({
+              studyId: z.string().nullable(),
+              description: z.string().nullable(),
+              patient: z.object({
                 name: z.string(),
               }),
-
+              doctor: z
+                .object({
+                  name: z.string(),
+                })
+                .nullable(),
               attachments: z.array(
                 z.object({
                   id: z.string(),
@@ -36,46 +42,40 @@ export const listOrgStudies = (app: FastifyInstance) => {
                   size: z.number(),
                 })
               ),
-              instances: z.array(
-                z.object({
-                  id: z.string(),
-                  previewUrl: z.string(),
-                  dicomUrl: z.string(),
-                  createdAt: z.date(),
-                })
-              ),
             })
           ),
         },
       },
+
       handler: async (request, reply) => {
         const { slug } = request.params;
         const { organizationId } = await request.getOrgMembershipBySlug(slug);
 
         const studies = await prisma.study.findMany({
-          where: {
-            organizationId,
-          },
+          where: { organizationId },
           select: {
             id: true,
             modality: true,
             status: true,
+            description: true,
             createdAt: true,
-            patient: { select: { name: true } },
-            attachments: {
-              select: { id: true, filename: true, url: true, size: true },
+            studyId: true,
+            patient: {
+              select: {
+                name: true,
+              },
             },
             doctor: {
               select: {
                 name: true,
               },
             },
-            instances: {
+            attachments: {
               select: {
                 id: true,
-                dicomUrl: true,
-                previewUrl: true,
-                createdAt: true,
+                filename: true,
+                url: true,
+                size: true,
               },
             },
           },

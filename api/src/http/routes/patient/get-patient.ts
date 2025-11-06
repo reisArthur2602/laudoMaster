@@ -27,7 +27,6 @@ export const getPatient = async (app: FastifyInstance) => {
             name: z.string(),
             cpf: z.string(),
             phone: z.string().nullable(),
-            gender: z.string().nullable(),
             birthDate: z.date().nullable(),
             createdAt: z.date(),
             studies: z.array(
@@ -46,8 +45,9 @@ export const getPatient = async (app: FastifyInstance) => {
         const { slug, patientId } = request.params;
 
         const { organizationId } = await request.requireOrgRole(slug, [
-          Role.MEMBER,
-          Role.SUPER_ADMIN,
+          Role.ADMIN,
+          Role.LAUDO,
+          Role.TECHNICAL,
         ]);
 
         const patient = await prisma.patient.findFirst({

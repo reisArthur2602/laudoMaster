@@ -37,7 +37,7 @@ export const updateMemberRole = (app: FastifyInstance) => {
 
         const { organizationId } = await request.requireOrgRole(
           slug,
-          Role.SUPER_ADMIN
+          Role.ADMIN
         );
 
         const member = await prisma.member.findUnique({
