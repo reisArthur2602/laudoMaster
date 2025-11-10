@@ -39,6 +39,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { formatStudyStatus } from "@/utils/format-study-status";
 import { StudyAttachments } from "./study-attachments";
+import { usePermission } from "@/hooks/use-permission";
 
 const studyColumns: ColumnDef<Study>[] = [
   {
@@ -120,18 +121,57 @@ const studyColumns: ColumnDef<Study>[] = [
     ),
   },
 ];
+const technicalColumns: ColumnDef<Study>[] = [
+  {
+    accessorKey: "patient.name",
+    header: () => "Paciente",
+    cell: ({ row }) => (
+      <div className="font-medium text-foreground capitalize">
+        {row.original.patient?.name.toLocaleLowerCase()}
+      </div>
+    ),
+  },
+  {
+    accessorKey: "createdAt",
+    header: () => "Realizado em",
+    cell: ({ row }) => {
+      const date = new Date(row.original.createdAt);
+      return <span>{date.toLocaleDateString("pt-BR")}</span>;
+    },
+  },
+  {
+    id: "actions",
+    header: "Ações",
+    cell: ({ row }) => (
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button variant="ghost" className="h-8 w-8 p-0 text-end">
+            <span className="sr-only">Abrir Menu</span>
+            <MoreHorizontal />
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="end">
+          <DropdownMenuLabel>Ações</DropdownMenuLabel>
+          <DropdownMenuSeparator />
+          <StudyAttachments study={row.original} />
+        </DropdownMenuContent>
+      </DropdownMenu>
+    ),
+  },
+];
 
 type StudiesData = {
   data: Study[];
+  role: Roles | null;
 };
 
-export const StudiesData = ({ data }: StudiesData) => {
+export const StudiesData = ({ data, role }: StudiesData) => {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
 
   const table = useReactTable({
     data,
-    columns: studyColumns,
+    columns: role === "TECHNICAL" ? technicalColumns : studyColumns,
     getPaginationRowModel: getPaginationRowModel(),
     onColumnFiltersChange: setColumnFilters,
     getFilteredRowModel: getFilteredRowModel(),

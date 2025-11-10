@@ -21,7 +21,7 @@ type Response = {
 export const getPatientData = async (idregistro: string) => {
   const { data } = await axios.post<Response[]>(
     "https://200.100.100.14:8096/api/registro/idregistro",
-    { idregistro: [1610349] },
+    { idregistro: [idregistro] },
     { httpsAgent }
   );
 

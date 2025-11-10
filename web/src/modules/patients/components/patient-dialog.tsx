@@ -14,19 +14,7 @@ import { User } from "lucide-react";
 import { useParams } from "react-router";
 import { Form } from "@/components/ui/form";
 import { usePatientDialog } from "../hooks/use-patient-dialog";
-import {
-  Select,
-  SelectTrigger,
-  SelectValue,
-  SelectContent,
-  SelectItem,
-} from "@/components/ui/select";
-import {
-  FormField,
-  FormItem,
-  FormLabel,
-  FormControl,
-} from "@/components/ui/form";
+
 import { useCallback } from "react";
 
 const maskCpf = (v: string) =>
@@ -125,28 +113,6 @@ export const PatientDialog = () => {
               placeholder="DD/MM/AAAA"
               onChange={handleDateChange}
               value={form.watch("birthDate")}
-            />
-
-            <FormField
-              control={form.control}
-              name="gender"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Sexo</FormLabel>
-                  <Select onValueChange={field.onChange} value={field.value}>
-                    <FormControl>
-                      <SelectTrigger className="w-full">
-                        <SelectValue placeholder="Selecione" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      <SelectItem value="M">Masculino</SelectItem>
-                      <SelectItem value="F">Feminino</SelectItem>
-                      <SelectItem value="O">Outro</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </FormItem>
-              )}
             />
 
             <DialogFooter>

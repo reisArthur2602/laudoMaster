@@ -17,7 +17,7 @@ export const queryClient = new QueryClient({
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <QueryClientProvider client={queryClient}>
-      <Toaster expand theme="system" />
+      <Toaster expand theme="system" richColors />
       <App />
     </QueryClientProvider>
   </StrictMode>

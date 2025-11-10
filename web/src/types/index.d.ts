@@ -64,8 +64,11 @@ type Patient = {
 
 type StudyStatus = "PENDING" | "REPORTING" | "REPORTED" | "DELIVERED";
 
+type StudyType = "EXTERNAL" | "ORTHANC";
+
 type Study = {
   id: string;
+  type: StudyType;
   modality: string | null;
   status: StudyStatus;
   studyId: string;

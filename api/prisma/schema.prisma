@@ -95,6 +95,7 @@ model Study {
   patientId      String
   studyId        String?   @unique
   organizationId String
+  type        StudyType    @default(ORTHANC)
   equipmentId    String?
   modality       String?
   description    String?
@@ -102,15 +103,12 @@ model Study {
   doctorId       String?
   createdAt      DateTime          @default(now())
   updatedAt      DateTime          @updatedAt
-  doctor         Doctor?            @relation(fields: [doctorId], references: [id], onDelete: Cascade)
+  doctor         Doctor?           @relation(fields: [doctorId], references: [id], onDelete: Cascade)
   equipment      Equipment?        @relation(fields: [equipmentId], references: [id])
   organization   Organization      @relation("OrgStudies", fields: [organizationId], references: [id], onDelete: Cascade)
   patient        Patient           @relation(fields: [patientId], references: [id], onDelete: Cascade)
   attachments    StudyAttachment[]
-
 }
-
-
 
 model StudyAttachment {
   id        String   @id @default(cuid())
@@ -123,8 +121,6 @@ model StudyAttachment {
   createdAt DateTime @default(now())
   study     Study    @relation(fields: [studyId], references: [id], onDelete: Cascade)
 }
-
-
 
 model IntegrationSettings {
   id              String       @id @default(cuid())
@@ -151,4 +147,8 @@ enum StudyStatus {
   REPORTING
   REPORTED
   DELIVERED
+}
+enum StudyType {
+  EXTERNAL
+  ORTHANC
 }

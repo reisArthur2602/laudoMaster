@@ -28,7 +28,6 @@ const schema = z.object({
       (val) => !val || /^\d{2}\/\d{2}\/\d{4}$/.test(val),
       "Data deve estar no formato DD/MM/AAAA"
     ),
-  gender: z.enum(["M", "F", "O"]).optional(),
 });
 
 export type PatientFormData = z.infer<typeof schema>;
@@ -43,7 +42,6 @@ export const usePatientDialog = (orgSlug: string) => {
       cpf: "",
       phone: "",
       birthDate: "",
-      gender: undefined,
     },
   });
 

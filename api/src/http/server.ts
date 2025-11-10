@@ -48,6 +48,7 @@ import { getStudiesByCpf } from "./routes/study/get-studies-by-cpf.js";
 import { createDoctor } from "./routes/doctor/create-doctor.js";
 import { listDoctors } from "./routes/doctor/list-doctors.js";
 import { deleteDoctor } from "./routes/doctor/delete-doctor.js";
+import { createStudy } from "./routes/study/create-study.js";
 
 const PORT = Number(process.env.PORT) || 3000;
 
@@ -65,7 +66,7 @@ server.register(fastifyCors, {
   origin: true,
 });
 
-server.register(fastifyMultipart);
+
 
 server.register(fastifySwagger, {
   openapi: {
@@ -88,11 +89,17 @@ server.register(fastifySwagger, {
   transform: jsonSchemaTransform,
 });
 
+server.register(fastifyMultipart, {
+  limits: {
+    fileSize: 20 * 1024 * 1024,
+    files: 1,
+    fields: 10,
+  },
+});
 server.register(fastifySwaggerUi, {
   routePrefix: "/docs",
 });
 
-// routes
 server.register(login);
 server.register(getUserProfile);
 
@@ -127,6 +134,7 @@ server.register(getStudy);
 server.register(attachStudyFile);
 server.register(deleteStudyFile);
 server.register(updateStudyStatus);
+server.register(createStudy);
 
 server.register(createDoctor);
 server.register(listDoctors);

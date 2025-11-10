@@ -73,7 +73,7 @@ export async function getStudiesCurrentDate(): Promise<string[]> {
 
   const { data } = await api.post("/tools/find", {
     Level: "Study",
-    Query: { StudyDate: `20251024` },
+    Query: { StudyDate: studyDate },
   });
 
   return data;

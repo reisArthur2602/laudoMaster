@@ -44,7 +44,7 @@ export const syncOrthancStudies = async () => {
         idmedico,
       } = response;
 
-      const firstSerie = study.Series?.[0];
+      const [firstSerie] = study.Series;
       if (!firstSerie) continue;
 
       const { MainDicomTags: serieMainDicomTags } = await getSeriesDetails(
@@ -62,8 +62,6 @@ export const syncOrthancStudies = async () => {
       if (!organizationWithSameEquipment) continue;
 
       const { organizationId } = organizationWithSameEquipment;
-
-
 
       let birthDate = null;
 
@@ -98,7 +96,6 @@ export const syncOrthancStudies = async () => {
         },
       });
 
-      // 🧾 3️⃣ Cria estudo com médico vinculado
       await prisma.study.create({
         data: {
           patientId: patient.id,

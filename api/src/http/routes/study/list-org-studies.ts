@@ -1,4 +1,4 @@
-import { StudyStatus } from "@prisma/client";
+import { StudyStatus, StudyType } from "@prisma/client";
 import { prisma } from "../../../database/prisma/prisma.js";
 import { authPlugin } from "../../plugins/auth.js";
 import type { FastifyInstance } from "fastify";
@@ -12,16 +12,20 @@ export const listOrgStudies = (app: FastifyInstance) => {
     .get("/org/:slug/studies", {
       schema: {
         tags: ["Studies"],
-        summary: "Listar estudos de uma organização",
+        summary: "Listar estudos de uma organização (com filtro opcional por tipo)",
         security: [{ bearerAuth: [] }],
         params: z.object({
           slug: z.string(),
+        }),
+        querystring: z.object({
+          type: z.nativeEnum(StudyType).optional(),
         }),
         response: {
           200: z.array(
             z.object({
               id: z.string(),
               modality: z.string().nullable(),
+              type: z.nativeEnum(StudyType),
               status: z.nativeEnum(StudyStatus),
               createdAt: z.date(),
               studyId: z.string().nullable(),
@@ -49,13 +53,18 @@ export const listOrgStudies = (app: FastifyInstance) => {
 
       handler: async (request, reply) => {
         const { slug } = request.params;
+        const { type } = request.query; 
         const { organizationId } = await request.getOrgMembershipBySlug(slug);
 
         const studies = await prisma.study.findMany({
-          where: { organizationId },
+          where: {
+            organizationId,
+            ...(type ? { type } : {}),
+          },
           select: {
             id: true,
             modality: true,
+            type: true,
             status: true,
             description: true,
             createdAt: true,

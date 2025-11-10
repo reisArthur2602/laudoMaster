@@ -2,7 +2,6 @@ import { Skeleton } from "@/components/ui/skeleton";
 
 type TableSkeletonProps = {
   rows?: number;
-
   columns?: number;
 };
 
