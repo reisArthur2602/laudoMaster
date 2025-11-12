@@ -27,17 +27,17 @@ export const OrganizationSwitch = () => {
     <DropdownMenu>
       <DropdownMenuTrigger className="w-[220px] flex items-center gap-2 text-sm font-medium outline-none  p-1">
         {loading ? (
-          <Skeleton className="h-4 w-[140px]" />
+          <Skeleton className="h-5 w-[220px]" />
         ) : currentOrganization ? (
           <span className="text-sm truncate text-left capitalize">
             {currentOrganization.name}
           </span>
         ) : (
           <span className="text-sm text-muted-foreground truncate text-left">
-            Selecione uma organização
+            Selecionar Organização
           </span>
         )}
-        <ChevronsUpDown className="ml-auto size-4 text-muted-foreground" />
+        <ChevronsUpDown className="ml-auto size-3 text-muted-foreground" />
       </DropdownMenuTrigger>
 
       <DropdownMenuContent align="center">

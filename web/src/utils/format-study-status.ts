@@ -5,7 +5,7 @@ export const formatStudyStatus = (status: string): string => {
     case "REPORTING":
       return "Em Análise";
     case "REPORTED":
-      return "Laudo Finalizado";
+      return "Aguardando Retirada";
     case "DELIVERED":
       return "Entregue ao Paciente";
     default:

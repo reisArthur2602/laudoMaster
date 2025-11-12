@@ -4,20 +4,36 @@ import { NotFoundPage } from "./modules/not-found";
 import { DashboardPage } from "./modules/dashboard";
 import { Dashboardlayout } from "./components/dashboard-layout";
 import { OrganizationLayout } from "./components/organization-layout";
-import { OrganizationPage } from "./modules/org";
-import { StudiesPage } from "./modules/studies";
-import { PatientsPage } from "./modules/patients";
-import { SettingsPage } from "./modules/settings";
-import { MembersPage } from "./modules/members";
-import { EquipmentsPage } from "./modules/equipments";
-import { PatientPage } from "./modules/patient";
+import { OrganizationPage } from "./modules/dashboard/org";
+import { StudiesPage } from "./modules/dashboard/org/studies";
+import { PatientsPage } from "./modules/dashboard/org/patients";
+import { SettingsPage } from "./modules/dashboard/settings";
+import { MembersPage } from "./modules/dashboard/org/members";
+import { EquipmentsPage } from "./modules/dashboard/org/equipments";
+import { PatientPage } from "./modules/dashboard/org/patients/patient";
+import { PatientPage as PatientClinicPage } from "./modules/patient";
 import { ErrorPage } from "./modules/error";
-import { DoctorsPage } from "./modules/doctors";
+import { DoctorsPage } from "./modules/dashboard/org/doctors";
+import { ExamsPage } from "./modules/patient/exams";
 
 const router = createBrowserRouter([
   {
     path: "/",
     element: <LoginPage />,
+  },
+  {
+    path: "/patient",
+
+    children: [
+      {
+        index: true,
+        element: <PatientClinicPage />,
+      },
+      {
+        path: "exams",
+        element: <ExamsPage />,
+      },
+    ],
   },
   {
     path: "/dashboard",

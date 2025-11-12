@@ -9,7 +9,8 @@ export const Header = () => {
     <header className="p-6 pb-3 bg-muted/20 ">
       <div className="mx-auto flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <Logo /> <Slash className="size-5 -rotate-20 text-border" />
+          <Logo />
+          <Slash className="size-5 -rotate-20 text-border" />
           <OrganizationSwitch />
         </div>
         <div className="flex items-center gap-2">

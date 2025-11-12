@@ -10,8 +10,8 @@ export const Logo = ({ to = "/dashboard" }: Logo) => {
     <Link to={to} className="flex items-center">
       <CloudUpload className="size-5 text-primary" />
       <div className="text-xl">
-        <span className="font-extrabold tracking-tighter">Laudo</span>
-        <span className="font-extralight ">Master</span>
+        <span className="font-extrabold tracking-tight">Portal</span>
+        <span className="font-light">Master</span>
       </div>
     </Link>
   );

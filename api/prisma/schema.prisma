@@ -95,7 +95,7 @@ model Study {
   patientId      String
   studyId        String?   @unique
   organizationId String
-  type        StudyType    @default(ORTHANC)
+  type           StudyType @default(ORTHANC)
   equipmentId    String?
   modality       String?
   description    String?

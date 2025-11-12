@@ -1,12 +1,12 @@
-import { prisma } from "../../../database/prisma/prisma.js";
-import { authPlugin } from "../../plugins/auth.js";
 import type { FastifyInstance } from "fastify";
 import { type ZodTypeProvider } from "fastify-type-provider-zod";
 import z from "zod";
+import { prisma } from "../../../database/prisma/prisma.js";
+import { authPlugin } from "../../plugins/auth.js";
 
 import crypto from "crypto";
-import { getFtpClient } from "../../lib/ftp-client.js";
 import { Readable } from "stream";
+import { getFtpClient } from "../../lib/ftp-client.js";
 import { BadRequestError } from "../_errors/bad-request-error.js";
 
 export const attachStudyFile = (app: FastifyInstance) => {
@@ -70,6 +70,11 @@ export const attachStudyFile = (app: FastifyInstance) => {
         });
 
         client.close();
+
+        await prisma.study.update({
+          where: { id: study.id },
+          data: { status: "REPORTED" },
+        });
 
         return reply.status(201).send(null);
       },
