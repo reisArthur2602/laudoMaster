@@ -1,4 +1,15 @@
 services:
+  sender-api:
+    build: .
+    container_name: api_sender
+    restart: unless-stopped
+    entrypoint: .docker/entrypoint.sh
+    ports:
+      - "4242:4242"
+    depends_on:
+      - db
+
+
   db:
     image: postgres:16-alpine
     restart: unless-stopped

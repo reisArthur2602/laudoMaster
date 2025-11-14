@@ -27,7 +27,7 @@ export const deleteDoctor = (app: FastifyInstance) => {
       async (request, reply) => {
         const { slug, id } = request.params;
 
-        await request.requireOrgRole(slug, Role.SUPER_ADMIN);
+        await request.requireOrgRole(slug, Role.ADMIN);
 
         await prisma.doctor.delete({
           where: { id },

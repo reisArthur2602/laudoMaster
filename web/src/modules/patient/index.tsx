@@ -6,7 +6,7 @@ export const PatientPage = () => {
     <div className="min-h-screen flex items-center justify-center p-6">
       <div className="w-full max-w-md  p-6 space-y-6">
         <div className="w-fit mx-auto">
-          <Logo to="/" />
+          <Logo  />
         </div>
 
         <div className="space-y-2 text-center">

@@ -1,7 +1,7 @@
 import { useFormContext } from "react-hook-form";
 import { FormItem, FormLabel, FormControl } from "@/components/ui/form";
 import { toast } from "sonner";
-import { FilePlus, Upload, UploadCloudIcon } from "lucide-react";
+import { FilePlus, UploadCloudIcon } from "lucide-react";
 
 type PdfUploadFieldProps = {
   name: string;

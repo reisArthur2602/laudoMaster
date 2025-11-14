@@ -10,7 +10,7 @@ export const Dashboardlayout = () => {
   if (!authenticated) return <Navigate to="/" replace />;
 
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="h-dvh flex flex-col">
       <Outlet />
     </div>
   );
