@@ -5,25 +5,10 @@ services:
     restart: unless-stopped
     ports:
       - "3010:3010"
-    environment:
-      - PORT=3010
-      - NODE_ENV=development
-      - DATABASE_URL=postgresql://master:masterccm02@db:5432/master?schema=public
-      - JWT_SECRET=ed7dfd9808f886a20ef6665de258e434569acccd
-      - FTP_HOST=147.93.64.78
-      - FTP_USER=u588900443.mastertelecom-claro.com.br
-      - FTP_PASSWORD=Mastertelecom@2025
-      - FTP_BASE_DIR=/public_html/uploads
-      - FTP_BASE_URL=https://mastertelecom-claro.com.br/uploads
-      - ORTHANC_USER=admin
-      - ORTHANC_PASS=Master@2024
-      - ORTHANC_URL=http://8aff0850b047.sn.mynetname.net:1111
-      - EXTERNAL_API_URL=https://servidorprincipal.no-ip.info:8096/api
     networks:
       - laudo-net
     depends_on:
       - db
-
   dicom-viewer:
     build: ./orthanc
     container_name: portal-master-dicom-viewer
@@ -39,10 +24,7 @@ services:
     restart: unless-stopped
     ports:
       - "3011:3011"
-    environment:
-      - VITE_API_URL=http://localhost:3010
-      - VITE_NODE_ENV=production
-      - DICOM_VIEWER_URL=http://localhost:5000
+
     networks:
       - laudo-net
   db:
