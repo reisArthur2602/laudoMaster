@@ -1,7 +1,6 @@
 import cron from "node-cron";
 import { prisma } from "../database/prisma/prisma.js";
 import {
-  getInstances,
   getSeriesDetails,
   getStudiesCurrentDate,
   getStudyDetails,

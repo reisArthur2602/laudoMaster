@@ -1,7 +1,7 @@
 services:
-  sender-api:
+  laudo-api:
     build: .
-    container_name: api_sender
+    container_name: laudo-api
     restart: unless-stopped
     entrypoint: .docker/entrypoint.sh
     ports:
@@ -9,15 +9,14 @@ services:
     depends_on:
       - db
 
-
   db:
-    image: postgres:16-alpine
+    image: postgres:17.7-alpine
     restart: unless-stopped
     environment:
       - POSTGRES_USER=master
       - POSTGRES_PASSWORD=masterccm02
       - POSTGRES_DB=master
     volumes:
-      - .docker/db_data:/var/lib/postgresql/data
+      - .docker/postgres_data:/var/lib/postgresql/data
     ports:
       - "5432:5432"

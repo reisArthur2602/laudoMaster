@@ -13,10 +13,11 @@ type Response = {
   idmedico: number;
 };
 
+const EXTERNAL_API_URL = process.env.EXTERNAL_API_URL!;
 
 export const getPatientData = async (idregistro: string) => {
   const { data } = await axios.post<Response[]>(
-    "https://servidorprincipal.no-ip.info:8096/api/registro/idregistro",
+    `${EXTERNAL_API_URL}/registro/idregistro`,
     { idregistro: [idregistro] }
   );
 

@@ -1,6 +1,5 @@
 node_modules
 .env
-.docker
-/src/generated/prisma
+.docker/postgres_data
 dist
 /src/generated/prisma

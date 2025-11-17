@@ -1,9 +1,9 @@
-import dayjs from "dayjs";
 import axios from "axios";
+import dayjs from "dayjs";
 
-const ORTHANC_URL = process.env.ORTHANC_URL || "http://10.1.1.212:8042";
-const ORTHANC_USER = process.env.ORTHANC_USER || "admin";
-const ORTHANC_PASS = process.env.ORTHANC_PASS || "Master@2024";
+const ORTHANC_URL = process.env.ORTHANC_URL!;
+const ORTHANC_USER = process.env.ORTHANC_USER!;
+const ORTHANC_PASS = process.env.ORTHANC_PASS!;
 
 export const api = axios.create({
   baseURL: ORTHANC_URL,
@@ -87,30 +87,4 @@ export async function getStudyDetails(studyID: string) {
 export async function getSeriesDetails(seriesID: string) {
   const { data } = await api.get<OrthancSeries>(`/series/${seriesID}`);
   return data;
-}
-
-type Instance = {
-  FileSize: number;
-  FileUuid: string;
-  ID: string;
-  IndexInSeries: number;
-  Labels: string[];
-  MainDicomTags: {
-    InstanceNumber?: string;
-    SOPInstanceUID?: string;
-  };
-  ParentSeries: string;
-  Type: "Instance";
-};
-
-export async function getInstances(
-  studyID: string
-): Promise<OrthancInstance[]> {
-  const { data } = await api.get<Instance[]>(`/studies/${studyID}/instances`);
-
-  return data.map((instance) => ({
-    id: instance.ID,
-    previewURL: `${ORTHANC_URL}/instances/${instance.ID}/preview`,
-    dicomURL: `${ORTHANC_URL}/instances/${instance.ID}/file`,
-  }));
 }

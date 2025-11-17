@@ -2,10 +2,15 @@ FROM node:24-alpine
 
 WORKDIR /app
 
-RUN apk add --no-cache openssl
-RUN apk add --no-cache postgresql-client
+RUN apk add --no-cache openssl postgresql-client
+
+
+COPY package*.json ./
+
+RUN npm install
 
 COPY . .
 
-RUN npm install -g typescript && npm install
 RUN chmod +x .docker/entrypoint.sh
+
+CMD [".docker/entrypoint.sh"]
