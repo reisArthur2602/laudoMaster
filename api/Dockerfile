@@ -4,7 +4,6 @@ WORKDIR /app
 
 RUN apk add --no-cache openssl postgresql-client
 
-
 COPY package*.json ./
 
 RUN npm install

@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Centro Clínico Master — Viewer Profissional</title>
+
+    <style>
+      body {
+        background: #111;
+        color: #eee;
+        font-family: "Segoe UI", sans-serif;
+        margin: 0;
+        overflow-x: hidden;
+      }
+
+      header {
+        background: #1b1b1b;
+        padding: 10px;
+        text-align: center;
+        font-size: 20px;
+        font-weight: bold;
+        color: #00bfff;
+        box-shadow: 0 2px 5px #000;
+      }
+
+      /* Toolbar */
+      #toolbar {
+        background: #181818;
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 6px;
+        padding: 8px;
+        border-bottom: 1px solid #333;
+        position: sticky;
+        top: 0;
+        z-index: 10;
+      }
+
+      button {
+        padding: 8px 12px;
+        background: #222;
+        color: #fff;
+        border: 1px solid #555;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 14px;
+        transition: 0.2s;
+      }
+
+      button:hover {
+        background: #333;
+      }
+
+      .slider-label {
+        font-size: 12px;
+        margin: 0 4px;
+        color: #ccc;
+      }
+
+      input[type="range"] {
+        width: 80px;
+        vertical-align: middle;
+      }
+
+      /* Área de visualização */
+      #viewer {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-wrap: wrap;
+        padding: 10px;
+        min-height: 70vh;
+        overflow-y: auto;
+      }
+
+      #dicomImage {
+        max-width: 90vw;
+        max-height: 75vh;
+        transition: transform 0.2s, filter 0.2s;
+        border-radius: 4px;
+      }
+
+      #viewer.grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        gap: 10px;
+      }
+
+      img.thumb {
+        width: 100%;
+        max-height: 250px;
+        object-fit: contain;
+        border: 1px solid #333;
+        border-radius: 6px;
+        background: #000;
+        box-shadow: 0 0 5px #000;
+        cursor: pointer;
+        transition: transform 0.2s;
+      }
+      img.thumb:hover {
+        transform: scale(1.05);
+      }
+
+      .info {
+        background: #1b1b1b;
+        padding: 8px;
+        text-align: center;
+        border-top: 1px solid #333;
+        color: #ccc;
+      }
+
+      /* Modal layout */
+      #layoutModal {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background: rgba(0, 0, 0, 0.75);
+        display: none;
+        justify-content: center;
+        align-items: center;
+        z-index: 9999;
+      }
+      #layoutModal.active {
+        display: flex;
+      }
+
+      .modal-content {
+        background: #222;
+        color: #fff;
+        padding: 20px;
+        border-radius: 8px;
+        width: 90%;
+        max-width: 400px;
+        text-align: center;
+      }
+
+      .layout-options {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+        gap: 8px;
+      }
+
+      .layout-options button {
+        background: #333;
+        border: 1px solid #666;
+        padding: 10px;
+        border-radius: 6px;
+        color: #fff;
+      }
+
+      .layout-options button.active {
+        background: #00bfff;
+        color: #000;
+        font-weight: bold;
+      }
+
+      /* Impressão limpa */
+      @media print {
+        @page {
+          size: A4 portrait;
+          margin: 12mm;
+        }
+        header,
+        #toolbar,
+        .info {
+          display: none !important;
+        }
+        html::before,
+        html::after,
+        body::before,
+        body::after {
+          display: none !important;
+          content: none !important;
+        }
+        #viewer {
+          display: block;
+        }
+      }
+
+      /* Responsividade refinada */
+      @media (max-width: 768px) {
+        header {
+          font-size: 18px;
+          padding: 8px;
+        }
+
+        #toolbar {
+          display: flex;
+          overflow-x: auto;
+          white-space: nowrap;
+          justify-content: flex-start;
+          padding: 6px 4px;
+          scrollbar-width: thin;
+          scrollbar-color: #444 #111;
+        }
+
+        #toolbar::-webkit-scrollbar {
+          height: 6px;
+        }
+        #toolbar::-webkit-scrollbar-thumb {
+          background: #444;
+          border-radius: 3px;
+        }
+
+        #toolbar button {
+          flex: 0 0 auto;
+          font-size: 12px;
+          padding: 6px 10px;
+          min-width: 90px;
+          margin: 3px;
+          border-radius: 6px;
+        }
+
+        .slider-label {
+          display: inline-block;
+          font-size: 11px;
+          margin: 0 2px;
+        }
+
+        #dicomImage {
+          max-width: 95vw;
+          max-height: 60vh;
+        }
+        #viewer.grid img.thumb {
+          max-height: 180px;
+        }
+      }
+
+      @media (max-width: 480px) {
+        #toolbar {
+          flex-wrap: nowrap;
+          overflow-x: auto;
+          justify-content: flex-start;
+        }
+
+        #toolbar button {
+          min-width: 75px;
+          font-size: 11px;
+          padding: 5px 6px;
+        }
+
+        .slider-label {
+          font-size: 10px;
+        }
+        input[type="range"] {
+          width: 60px;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <header>Centro Clínico Master — Viewer Profissional</header>
+
+    <div id="toolbar">
+      <button onclick="prevImg()">⏮️ Anterior</button>
+      <button onclick="nextImg()">⏭️ Próxima</button>
+      <button onclick="toggleGrid()">🖼️ Ver todas</button>
+      <button onclick="zoomIn()">🔍+</button>
+      <button onclick="zoomOut()">🔍-</button>
+      <button onclick="resetView()">♻️ Resetar</button>
+      <button onclick="openLayoutModal()">🧩 Layout</button>
+      <button onclick="printAll()">🖨️ Imprimir</button>
+      <button onclick="savePDF()">📄 PDF</button>
+      <div>
+        <span class="slider-label">Brilho</span>
+        <input type="range" id="bright" min="50" max="150" value="100" />
+        <span class="slider-label">Contraste</span>
+        <input type="range" id="contr" min="50" max="150" value="100" />
+      </div>
+    </div>
+
+    <div class="info" id="paciente"></div>
+    <div id="viewer"><img id="dicomImage" /></div>
+
+    <iframe id="printFrame" style="display: none"></iframe>
+
+    <div id="layoutModal">
+      <div class="modal-content">
+        <h3>Layout de Impressão</h3>
+        <div class="layout-options" id="layoutButtons"></div>
+        <br />
+        <button onclick="closeLayoutModal()">Fechar</button>
+      </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script>
+      const params = new URLSearchParams(location.search);
+      const study = params.get("study");
+      let imgs = [],
+        idx = 0,
+        zoom = 1,
+        bright = 100,
+        contr = 100;
+      let gridMode = false,
+        meta = {};
+      let layoutCols = 2,
+        layoutRows = 2;
+      const viewer = document.getElementById("viewer");
+      const pacEl = document.getElementById("paciente");
+
+      function applyTransform() {
+        const im = document.getElementById("dicomImage");
+        if (im) {
+          im.style.transform = `scale(${zoom})`;
+          im.style.filter = `brightness(${bright / 100}) contrast(${
+            contr / 100
+          })`;
+        }
+      }
+
+      async function loadStudy() {
+        const r = await fetch(`/api/study/${study}`);
+        meta = await r.json();
+        imgs = meta.instances || [];
+        const p = meta.patient || {};
+        pacEl.innerHTML = `<b>Paciente:</b> ${
+          p.PatientName || ""
+        } — <b>Exame:</b> ${meta.desc || ""}`;
+        renderLayout();
+      }
+
+      function showImage(i) {
+        if (i < 0 || i >= imgs.length) return;
+        idx = i;
+        gridMode = false;
+        renderLayout();
+      }
+      function prevImg() {
+        if (idx > 0) showImage(idx - 1);
+      }
+      function nextImg() {
+        if (idx < imgs.length - 1) showImage(idx + 1);
+      }
+      function zoomIn() {
+        zoom *= 1.2;
+        applyTransform();
+      }
+      function zoomOut() {
+        zoom /= 1.2;
+        applyTransform();
+      }
+      function resetView() {
+        zoom = 1;
+        bright = 100;
+        contr = 100;
+        applyTransform();
+      }
+      function toggleGrid() {
+        gridMode = !gridMode;
+        renderLayout();
+      }
+
+      function renderLayout() {
+        viewer.innerHTML = "";
+        if (!gridMode) {
+          const img = document.createElement("img");
+          img.id = "dicomImage";
+          img.src = `/api/png/${imgs[idx]}?t=${Date.now()}`;
+          viewer.appendChild(img);
+          applyTransform();
+        } else {
+          viewer.classList.add("grid");
+          viewer.style.gridTemplateColumns = `repeat(${layoutCols},1fr)`;
+          imgs.forEach((id, i) => {
+            const thumb = document.createElement("img");
+            thumb.className = "thumb";
+            thumb.src = `/api/png/${id}`;
+            thumb.onclick = () => showImage(i);
+            viewer.appendChild(thumb);
+          });
+        }
+      }
+
+      /* ===== Layout Modal ===== */
+      function openLayoutModal() {
+        const modal = document.getElementById("layoutModal");
+        const container = document.getElementById("layoutButtons");
+        container.innerHTML = "";
+        const layouts = [
+          [1, 1],
+          [1, 2],
+          [2, 1],
+          [2, 2],
+          [2, 3],
+          [3, 2],
+          [3, 3],
+          [3, 4],
+          [4, 4],
+        ];
+        layouts.forEach(([r, c]) => {
+          const btn = document.createElement("button");
+          btn.textContent = `${r}x${c}`;
+          btn.onclick = () => {
+            layoutRows = r;
+            layoutCols = c;
+            gridMode = true;
+            renderLayout();
+            updateActiveLayout(btn);
+          };
+          container.appendChild(btn);
+        });
+        modal.classList.add("active");
+      }
+      function closeLayoutModal() {
+        document.getElementById("layoutModal").classList.remove("active");
+      }
+      function updateActiveLayout(active) {
+        document
+          .querySelectorAll("#layoutButtons button")
+          .forEach((b) => b.classList.remove("active"));
+        active.classList.add("active");
+      }
+
+      /* ===== Impressão ===== */
+      async function printAll() {
+        const frame = document.getElementById("printFrame");
+        const doc = frame.contentWindow.document;
+        const logoUrl = "/static/logo_master.png";
+        const p = meta.patient || {};
+        doc.open();
+        doc.write(`
+  <html><head><title>Impressão</title>
+  <style>
+  @page{size:A4 portrait;margin:12mm;}
+  html,body{margin:0;padding:0;font-family:sans-serif;}
+  .wrapper{min-height:100vh;display:flex;flex-direction:column;justify-content:space-between;}
+  .print-header{display:flex;align-items:center;justify-content:center;gap:15px;margin-bottom:15px;}
+  .print-header img{height:60px;}
+  .print-header h2{font-size:16px;margin:0;text-align:center;}
+  #print-container{display:grid;grid-template-columns:repeat(${layoutCols},1fr);gap:8px;justify-items:center;}
+  .print-cell img{width:100%;object-fit:contain;}
+  footer{text-align:center;font-size:10px;color:#777;margin-top:15px;position:fixed;bottom:10px;width:100%;}
+  </style></head><body>
+  <div class="wrapper">
+    <div>
+      <div class="print-header">
+        <img src="${logoUrl}">
+        <h2>${p.PatientName || ""} — ${meta.desc || ""}</h2>
+      </div>
+      <div id="print-container">
+        ${imgs
+          .map(
+            (id) => `<div class="print-cell"><img src="/api/png/${id}"></div>`
+          )
+          .join("")}
+      </div>
+    </div>
+    <footer>Centro Clínico Master — Sistema de Laudos Digitais</footer>
+  </div></body></html>`);
+        doc.close();
+        const allImgs = frame.contentWindow.document.querySelectorAll("img");
+        let loaded = 0;
+        allImgs.forEach((img) => {
+          img.onload = img.onerror = () => {
+            loaded++;
+            if (loaded === allImgs.length)
+              setTimeout(() => frame.contentWindow.print(), 500);
+          };
+        });
+      }
+
+      /* ===== PDF ===== */
+      async function savePDF() {
+        const { jsPDF } = window.jspdf;
+        const pdf = new jsPDF({ orientation: "p", unit: "mm", format: "a4" });
+        const p = meta.patient || {};
+        const logo = "/static/logo_master.png";
+        const logoBlob = await fetch(logo).then((r) => r.blob());
+        const logoData = await new Promise((res) => {
+          const reader = new FileReader();
+          reader.onload = () => res(reader.result);
+          reader.readAsDataURL(logoBlob);
+        });
+        const pageWidth = pdf.internal.pageSize.getWidth();
+        const pageHeight = pdf.internal.pageSize.getHeight();
+        const margin = 10,
+          availableW = pageWidth - margin * 2,
+          availableH = pageHeight - margin * 2 - 25;
+        const cellW = availableW / layoutCols,
+          cellH = availableH / layoutRows;
+        pdf.addImage(logoData, "PNG", margin, 5, 25, 15);
+        pdf.setFontSize(12);
+        pdf.text(
+          `${p.PatientName || ""} — ${meta.desc || ""}`,
+          pageWidth / 2,
+          15,
+          { align: "center" }
+        );
+        let x = margin,
+          y = 25,
+          count = 0;
+        for (const id of imgs) {
+          const imgBlob = await fetch(`/api/png/${id}`).then((r) => r.blob());
+          const dataURL = await new Promise((res) => {
+            const r = new FileReader();
+            r.onload = () => res(r.result);
+            r.readAsDataURL(imgBlob);
+          });
+          pdf.addImage(dataURL, "PNG", x, y, cellW - 5, cellH - 5, "", "FAST");
+          count++;
+          if (count % layoutCols === 0) {
+            x = margin;
+            y += cellH;
+          } else {
+            x += cellW;
+          }
+          if (count % (layoutCols * layoutRows) === 0 && count < imgs.length) {
+            pdf.addPage();
+            pdf.addImage(logoData, "PNG", margin, 5, 25, 15);
+            pdf.text(
+              `${p.PatientName || ""} — ${meta.desc || ""}`,
+              pageWidth / 2,
+              15,
+              { align: "center" }
+            );
+            x = margin;
+            y = 25;
+          }
+        }
+        pdf.setFontSize(10);
+        pdf.text(
+          "Centro Clínico Master — Sistema de Laudos Digitais",
+          pageWidth / 2,
+          pageHeight - 8,
+          { align: "center" }
+        );
+        pdf.save("exame.pdf");
+      }
+
+      /* ===== Gestos Pinça ===== */
+      let lastDist = 0;
+      viewer.addEventListener("touchmove", (e) => {
+        if (e.touches.length === 2) {
+          const dx = e.touches[0].clientX - e.touches[1].clientX;
+          const dy = e.touches[0].clientY - e.touches[1].clientY;
+          const dist = Math.sqrt(dx * dx + dy * dy);
+          if (lastDist) {
+            const delta = dist - lastDist;
+            if (Math.abs(delta) > 5) {
+              zoom *= delta > 0 ? 1.05 : 0.95;
+              applyTransform();
+            }
+          }
+          lastDist = dist;
+        }
+      });
+      viewer.addEventListener("touchend", () => (lastDist = 0));
+
+      document.getElementById("bright").addEventListener("input", (e) => {
+        bright = +e.target.value;
+        applyTransform();
+      });
+      document.getElementById("contr").addEventListener("input", (e) => {
+        contr = +e.target.value;
+        applyTransform();
+      });
+
+      loadStudy();
+    </script>
+  </body>
+</html>

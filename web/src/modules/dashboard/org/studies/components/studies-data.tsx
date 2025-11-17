@@ -35,6 +35,8 @@ import { Badge } from '@/components/ui/badge';
 import { formatStudyStatus } from '@/utils/format-study-status';
 import { StudyAttachments } from './study-attachments';
 
+const DICOM_VIEWER_URL = import.meta.env.VITE_DICOM_VIEWER_URL!;
+
 const studyColumns: ColumnDef<Study>[] = [
     {
         accessorKey: 'patient.name',
@@ -100,7 +102,7 @@ const studyColumns: ColumnDef<Study>[] = [
                     <StudyAttachments study={row.original} />
                     <DropdownMenuItem asChild>
                         <a
-                            href={`http://10.1.1.145:5000/viewer_pro.html?study=${row.original.studyId}`}
+                            href={`${DICOM_VIEWER_URL}/viewer_pro.html?study=${row.original.studyId}`}
                         >
                             <ImageIcon />
                             Ver Imagens
@@ -111,6 +113,7 @@ const studyColumns: ColumnDef<Study>[] = [
         ),
     },
 ];
+
 const technicalColumns: ColumnDef<Study>[] = [
     {
         accessorKey: 'patient.name',

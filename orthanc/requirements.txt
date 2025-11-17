@@ -1,0 +1,5 @@
+flask
+requests
+pydicom
+numpy
+Pillow
